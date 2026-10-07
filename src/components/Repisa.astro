@@ -1,0 +1,23 @@
+---
+import CacaoForma from './CacaoForma.astro';
+import { products } from '../data/site';
+import type { Lang } from '../data/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const href = lang === 'es' ? '/cacao-ceremonial/#tamanos' : '/en/ceremonial-cacao/#sizes';
+const kinds = ['disco', 'disco', 'bolita', 'bloque'] as const;
+const widths = [58, 96, 128, 168];
+---
+<div class="repisa" role="list">
+  {products.map((p, i) => (
+    <a class="objeto" role="listitem" href={href}>
+      <div class="objeto-foto"><CacaoForma kind={kinds[i]} w={widths[i]} /></div>
+      <div class="tabla"></div>
+      <div class="objeto-info">
+        <span class="objeto-peso">{p.size} g</span>
+        <span class="objeto-forma">{p.form[lang]}</span>
+        <span class="objeto-precio">${p.price} MXN</span>
+      </div>
+    </a>
+  ))}
+</div>

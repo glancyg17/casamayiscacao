@@ -1,0 +1,67 @@
+---
+import Base from './Base.astro';
+import Faq from '../components/Faq.astro';
+import CierreCta from '../components/CierreCta.astro';
+import { ui, type Lang } from '../data/ui';
+import { site } from '../data/site';
+import type { Alternates } from '../data/routes';
+
+interface Props {
+  lang: Lang; path: string; alternates: Alternates;
+  title: string; seoTitle?: string; description: string;
+  updated?: Date; date?: Date; image?: string;
+  faq?: { q: string; a: string }[];
+  cta?: 'buy' | 'whatsapp' | 'none';
+  article?: boolean;
+  parent?: { href: string; label: string };
+}
+const { lang, path, alternates, title, seoTitle, description, updated, date, image, faq, cta = 'buy', article = false, parent } = Astro.props;
+const t = ui[lang];
+const fmt = (d: Date) => d.toLocaleDateString(lang === 'es' ? 'es-MX' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const abs = (p: string) => (p.startsWith('http') ? p : site.url + p);
+const home = lang === 'es' ? '/' : '/en/';
+const crumbs = [{ name: t.crumbHome, url: home }, ...(parent ? [{ name: parent.label, url: parent.href }] : []), { name: title, url: path }];
+const schema: object[] = [
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: abs(c.url) })),
+  },
+  {
+    '@type': article ? 'Article' : 'WebPage',
+    headline: title,
+    description,
+    inLanguage: ui[lang].htmlLang,
+    url: abs(path),
+    mainEntityOfPage: abs(path),
+    ...(date ? { datePublished: date.toISOString() } : {}),
+    ...(updated || date ? { dateModified: (updated ?? date)!.toISOString() } : {}),
+    image: abs(image ?? '/images/og-casa-mayis.jpg'),
+    author: { '@id': site.url + '/#mayis' },
+    publisher: { '@id': site.url + '/#negocio' },
+  },
+  ...(faq?.length
+    ? [{
+        '@type': 'FAQPage',
+        mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/<[^>]+>/g, '') } })),
+      }]
+    : []),
+];
+---
+<Base title={seoTitle ?? `${title} | Casa Mayis`} description={description} lang={lang} path={path} alternates={alternates} image={image} schema={schema} ogType={article ? 'article' : 'website'} published={date} modified={updated ?? date}>
+  <div class="cal">
+    <div class="wrap cabecera">
+      <nav class="migas" aria-label="Breadcrumb">
+        <a href={home}>{t.crumbHome}</a>
+        {parent && <> / <a href={parent.href}>{parent.label}</a></>}
+      </nav>
+      <h1>{title}</h1>
+      <p class="lead">{description}</p>
+      {(updated || date) && <p class="meta">{t.updated}: {fmt((updated ?? date)!)}. Casa Mayis, Campeche.</p>}
+    </div>
+    <article class="prosa"><slot /></article>
+    {faq?.length ? (
+      <div class="prosa"><h2>{lang === 'es' ? 'Preguntas frecuentes' : 'Frequently asked questions'}</h2><Faq items={faq} /></div>
+    ) : null}
+  </div>
+  {cta !== 'none' && <CierreCta lang={lang} variant={cta} />}
+</Base>

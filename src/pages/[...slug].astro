@@ -1,0 +1,18 @@
+---
+import { getCollection, render } from 'astro:content';
+import Articulo from '../layouts/Articulo.astro';
+import { alternatesFor } from '../data/routes';
+
+export async function getStaticPaths() {
+  const entries = (await getCollection('pages')).filter((e) => e.data.lang === 'es');
+  return entries.map((entry) => ({ params: { slug: entry.data.urlSlug }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const path = `/${d.urlSlug}/`;
+const alternates = await alternatesFor(d.key);
+---
+<Articulo lang="es" path={path} alternates={alternates} title={d.title} seoTitle={d.seoTitle} description={d.description} updated={d.updated} image={d.image} faq={d.faq} cta={d.cta} article={d.type === 'article'}>
+  <Content />
+</Articulo>

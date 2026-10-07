@@ -1,0 +1,30 @@
+---
+import { products, wa } from '../data/site';
+import type { Lang } from '../data/ui';
+interface Props { lang: Lang; variant?: 'buy' | 'whatsapp' }
+const { lang, variant = 'buy' } = Astro.props;
+const es = lang === 'es';
+const from = Math.min(...products.map((p) => p.price));
+---
+<section class="muro sec">
+  <div class="wrap">
+    {variant === 'buy' ? (
+      <>
+        <h2>{es ? 'Cacao puro de Tabasco, listo para tu taza.' : 'Pure Tabasco cacao, ready for your cup.'}</h2>
+        <p class="lead">{es
+          ? `Cuatro tamaños, desde $${from} MXN. Lo tuesto y lo muelo yo misma, y te lo mando a todo México.`
+          : `Four sizes, from $${from} MXN. I toast and grind it myself and ship it across Mexico.`}</p>
+        <div class="btns">
+          <a class="btn" href={es ? '/cacao-ceremonial/#tamanos' : '/en/ceremonial-cacao/#sizes'}>{es ? 'Ver tamaños y precios' : 'See sizes and prices'}</a>
+          <a class="btn btn-line" href={wa(es ? 'Hola Mayis, tengo una pregunta sobre el cacao.' : 'Hi Mayis, I have a question about the cacao.')}>{es ? 'Escríbenos por WhatsApp' : 'Message us on WhatsApp'}</a>
+        </div>
+      </>
+    ) : (
+      <>
+        <h2>{es ? '¿Platicamos?' : 'Shall we talk?'}</h2>
+        <p class="lead">{es ? 'Escríbenos por WhatsApp y te respondemos en cuanto podemos.' : 'Message us on WhatsApp and we will reply as soon as we can.'}</p>
+        <div class="btns"><a class="btn" href={wa(es ? 'Hola Mayis, me gustaría más información.' : 'Hi Mayis, I would like more information.')}>{es ? 'Escríbenos por WhatsApp' : 'Message us on WhatsApp'}</a></div>
+      </>
+    )}
+  </div>
+</section>

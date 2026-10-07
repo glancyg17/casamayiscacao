@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { alternatesFor } from '../../data/routes';
+const posts = (await getCollection('blog')).filter((p) => p.data.lang === 'es').sort((a, b) => +b.data.date - +a.data.date);
+const alternates = await alternatesFor('blog');
+const fmt = (d: Date) => d.toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+---
+<Base title="Blog sobre cacao ceremonial | Casa Mayis" description="Historias, guías y respuestas sobre el cacao ceremonial: qué es, cómo prepararlo, su historia en Mesoamérica y su origen en Tabasco." lang="es" path="/blog/" alternates={alternates}>
+  <div class="cal">
+    <div class="wrap cabecera">
+      <h1>Blog</h1>
+      <p class="lead">Historias, guías y respuestas sobre el cacao, contadas con calma.</p>
+    </div>
+    <div class="wrap" style="max-width:48rem;margin-inline:auto;padding-bottom:72px">
+      <ul class="lista">
+        {posts.map((p) => (
+          <li>
+            <h2><a href={`/blog/${p.data.urlSlug}/`}>{p.data.title}</a></h2>
+            <p>{p.data.description}</p>
+            <p class="meta">{fmt(p.data.date)}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</Base>

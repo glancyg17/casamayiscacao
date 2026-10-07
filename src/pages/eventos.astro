@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import CierreCta from '../components/CierreCta.astro';
+import { eventos, site, wa } from '../data/site';
+import { alternatesFor } from '../data/routes';
+
+const alternates = await alternatesFor('events');
+const today = new Date().toISOString().slice(0, 10);
+const proximos = eventos.filter((e) => e.date >= today).sort((a, b) => a.date.localeCompare(b.date));
+const fmt = (d: string) => new Date(d + 'T12:00:00Z').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+const abs = (p: string) => site.url + p;
+const schema = [
+  ...proximos.map((e) => ({
+    '@type': 'Event',
+    name: e.title,
+    startDate: `${e.date}T${e.time}:00-06:00`,
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    description: e.note,
+    location: { '@type': 'Place', name: e.place, address: { '@type': 'PostalAddress', addressLocality: site.address.locality, addressRegion: site.address.region, addressCountry: 'MX' } },
+    organizer: { '@id': site.url + '/#negocio' },
+    url: abs('/eventos/'),
+  })),
+];
+---
+<Base title="Eventos de cacao en Campeche: ceremonias y círculos | Casa Mayis" description="Ceremonias, talleres y círculos de cacao con Mayis en Campeche. Fechas, lugares y cómo reservar por WhatsApp. Todas las personas son bienvenidas." lang="es" path="/eventos/" alternates={alternates} schema={schema}>
+  <div class="cal">
+    <div class="wrap cabecera">
+      <h1>Ceremonias, talleres y círculos de cacao</h1>
+      <p class="lead">Mayis reúne a la gente alrededor del cacao en Campeche. Todas las personas son bienvenidas. Algunos círculos son solo para mujeres, y lo decimos en cada fecha.</p>
+    </div>
+    <div class="wrap" style="max-width:48rem;margin-inline:auto;padding-bottom:72px">
+      <h2>Próximas fechas</h2>
+      {proximos.length ? (
+        <ul class="lista">
+          {proximos.map((e) => (
+            <li>
+              <h3>{e.title}{e.womenOnly ? ' (solo mujeres)' : ''}</h3>
+              <p>{fmt(e.date)}, {e.time} h. {e.place}.</p>
+              <p>{e.note}</p>
+              <p><a href={wa(`Hola Mayis, quiero reservar mi lugar en "${e.title}" del ${e.date}.`)}>Reservar por WhatsApp</a></p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>Todavía no hay fechas publicadas. Síguenos en Instagram <a href={site.instagram} rel="noopener">@casamayis</a> o escríbenos por WhatsApp y te avisamos.</p>
+      )}
+      <h2>Cómo reservar</h2>
+      <p>Las reservas son por WhatsApp. Escríbenos con tu nombre y la fecha que te interesa, y te confirmamos tu lugar. Los cupos son limitados.</p>
+      <h2>¿Quieres cacao para tu propio círculo?</h2>
+      <p>Si facilitas ceremonias o círculos, mira nuestro <a href="/cacao-ceremonial/#tamanos">cacao ceremonial</a> y la página <a href="/mayoreo/">para guías y tiendas</a>.</p>
+    </div>
+  </div>
+  <CierreCta lang="es" variant="whatsapp" />
+</Base>

@@ -1,0 +1,122 @@
+---
+import '@fontsource-variable/fraunces/opsz.css';
+import '@fontsource-variable/albert-sans';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { ui, type Lang } from '../data/ui';
+import { site } from '../data/site';
+import type { Alternates } from '../data/routes';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  path: string; // ruta canónica, ej. '/cacao-ceremonial/'
+  alternates?: Alternates;
+  image?: string;
+  ogType?: 'website' | 'article';
+  schema?: object[];
+  noindex?: boolean;
+  published?: Date;
+  modified?: Date;
+}
+const { title, description, lang, path, alternates = {}, image = '/images/og-casa-mayis.jpg', ogType = 'website', schema = [], noindex = false, published, modified } = Astro.props;
+const t = ui[lang];
+const abs = (p: string) => (p.startsWith('http') ? p : site.url + p);
+const canonical = abs(path);
+const both = alternates.es && alternates.en;
+
+const negocio: Record<string, unknown> = {
+  '@type': ['Store', 'LocalBusiness'],
+  '@id': site.url + '/#negocio',
+  name: site.name,
+  url: site.url,
+  logo: abs('/images/logo-verde.png'),
+  image: abs('/images/og-casa-mayis.jpg'),
+  description:
+    'Casa Mayis vende cacao ceremonial 100% puro de Tabasco, tostado y molido por Mayis en Campeche, México. Envíos a todo el país.',
+  telephone: site.whatsappDisplay,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.streetAddress,
+    addressLocality: site.address.locality,
+    addressRegion: site.address.region,
+    ...(site.address.postalCode ? { postalCode: site.address.postalCode } : {}),
+    addressCountry: site.address.country,
+  },
+  ...(site.geo ? { geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng } } : {}),
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: site.hours.open,
+      closes: site.hours.close,
+    },
+  ],
+  areaServed: { '@type': 'Country', name: 'México' },
+  currenciesAccepted: 'MXN',
+  sameAs: [site.instagram, ...(site.mapsUrl ? [site.mapsUrl] : [])],
+  founder: { '@id': site.url + '/#mayis' },
+};
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    negocio,
+    {
+      '@type': 'Person',
+      '@id': site.url + '/#mayis',
+      name: 'Mayis',
+      alternateName: 'Mayra Damian',
+      jobTitle: 'Fundadora de Casa Mayis y guía de ceremonias de cacao',
+      worksFor: { '@id': site.url + '/#negocio' },
+      image: abs('/images/mayis.jpg'),
+      sameAs: [site.instagram],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': site.url + '/#sitio',
+      url: site.url,
+      name: site.name,
+      inLanguage: ['es-MX', 'en'],
+      publisher: { '@id': site.url + '/#negocio' },
+    },
+  ],
+};
+---
+<!doctype html>
+<html lang={t.htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
+    <meta name="theme-color" content="#434b2b" />
+    <link rel="canonical" href={canonical} />
+    {both && <link rel="alternate" hreflang="es-MX" href={abs(alternates.es!)} />}
+    {both && <link rel="alternate" hreflang="en" href={abs(alternates.en!)} />}
+    {both && <link rel="alternate" hreflang="x-default" href={abs(alternates.es!)} />}
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={abs(image)} />
+    <meta property="og:locale" content={t.locale} />
+    {both && <meta property="og:locale:alternate" content={lang === 'es' ? ui.en.locale : ui.es.locale} />}
+    {published && <meta property="article:published_time" content={published.toISOString()} />}
+    {modified && <meta property="article:modified_time" content={modified.toISOString()} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} />
+    {schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...s })} />)}
+  </head>
+  <body>
+    <a class="skip" href="#contenido">{t.skip}</a>
+    <Header lang={lang} path={path} alternates={alternates} />
+    <main id="contenido"><slot /></main>
+    <Footer lang={lang} />
+  </body>
+</html>

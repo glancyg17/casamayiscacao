@@ -1,0 +1,5 @@
+---
+interface Props { kind: 'disco' | 'bolita' | 'bloque'; w: number }
+const { kind, w } = Astro.props;
+---
+<span class={`cacao-forma ${kind}`} style={`width:min(${w}px,72%)`} aria-hidden="true"></span>

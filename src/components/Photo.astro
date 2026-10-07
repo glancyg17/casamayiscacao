@@ -1,0 +1,10 @@
+---
+// Muestra la foto si existe; si no, un marcador claro que dice qué foto falta.
+interface Props { src?: string; alt?: string; ratio?: string; label?: string; class?: string; eager?: boolean; w?: number; h?: number }
+const { src, alt = '', ratio = '4 / 5', label = 'Foto por agregar', class: cls = '', eager = false, w, h } = Astro.props;
+---
+<figure class={`foto ${src ? '' : 'foto-pend'} ${cls}`} style={`aspect-ratio:${ratio}`}>
+  {src
+    ? <img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" width={w} height={h} />
+    : <div><img src="/images/logo-verde.png" alt="" width="56" height="56" /><span>{label}</span></div>}
+</figure>

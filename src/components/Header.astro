@@ -1,0 +1,40 @@
+---
+import { ui, type Lang } from '../data/ui';
+import type { Alternates } from '../data/routes';
+interface Props { lang: Lang; path: string; alternates: Alternates }
+const { lang, path, alternates } = Astro.props;
+const t = ui[lang];
+const other: Lang = lang === 'es' ? 'en' : 'es';
+const otherHref = alternates[other] ?? (other === 'es' ? '/' : '/en/');
+const p = (es: string, en: string) => (lang === 'es' ? es : en);
+const links = [
+  { href: p('/cacao-ceremonial/', '/en/ceremonial-cacao/'), label: t.nav.product },
+  { href: p('/como-preparar-cacao-ceremonial/', '/en/how-to-prepare-ceremonial-cacao/'), label: t.nav.howto },
+  ...(lang === 'es' ? [{ href: '/cacao-ceremonial-campeche/', label: t.nav.campeche }] : []),
+  { href: p('/mayis/', '/en/mayis/'), label: t.nav.mayis },
+  ...(lang === 'es' ? [{ href: '/eventos/', label: t.nav.events }, { href: '/blog/', label: t.nav.blog }] : []),
+];
+const home = lang === 'es' ? '/' : '/en/';
+const buy = p('/cacao-ceremonial/#tamanos', '/en/ceremonial-cacao/#sizes');
+---
+<header class="top">
+  <div class="top-in">
+    <a class="marca" href={home} aria-label="Casa Mayis">
+      <img src="/images/logo-verde.png" alt="" width="38" height="38" />
+      <span class="marca-txt">Casa Mayis</span>
+    </a>
+    <nav class="nav" aria-label={lang === 'es' ? 'Principal' : 'Main'}>
+      {links.map((l) => <a href={l.href} aria-current={path === l.href ? 'page' : undefined}>{l.label}</a>)}
+      <a class="lang" href={otherHref} hreflang={other} lang={other}>{t.footer.lang}</a>
+      <a class="btn" href={buy}>{t.buy}</a>
+    </nav>
+    <details class="burger">
+      <summary>{t.menu}</summary>
+      <div class="burger-panel">
+        {links.map((l) => <a href={l.href}>{l.label}</a>)}
+        <a href={otherHref} hreflang={other} lang={other}>{t.footer.lang}</a>
+        <a href={buy}><strong>{t.buy}</strong></a>
+      </div>
+    </details>
+  </div>
+</header>

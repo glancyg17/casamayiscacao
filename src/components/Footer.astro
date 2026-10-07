@@ -1,0 +1,53 @@
+---
+import { ui, type Lang } from '../data/ui';
+import { site, wa } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang]; const f = t.footer; const l = t.links;
+const es = lang === 'es';
+const P = (a: string, b: string) => (es ? a : b);
+---
+<footer class="pie">
+  <div class="wrap">
+    <div class="pie-grid">
+      <div>
+        <a class="marca" href={P('/', '/en/')}><img src="/images/logo-crema.png" alt="" width="44" height="44" /><span class="marca-txt">Casa Mayis</span></a>
+        <p>{t.tagline}</p>
+        <p><a href={site.instagram} rel="me noopener" target="_blank">Instagram {site.instagramHandle}</a></p>
+      </div>
+      <div>
+        <h2>{f.visit}</h2>
+        <address style="font-style:normal">
+          {site.address.streetAddress}<br />{site.address.locality}, {site.address.region}, México<br />
+          {site.mapsUrl && <><a href={site.mapsUrl} rel="noopener" target="_blank">Google Maps</a><br /></>}
+          <a href={wa(es ? 'Hola Mayis, quisiera pasar por cacao.' : 'Hi Mayis, I would like to stop by for cacao.')}>WhatsApp {site.whatsappDisplay}</a>
+        </address>
+        <h2 style="margin-top:1.2em">{f.hours}</h2>
+        <p>{es ? site.hours.days + ', 9:00 a 18:00' : site.hours.daysEn + ', 9 am to 6 pm'}</p>
+      </div>
+      <div>
+        <h2>{f.learn}</h2>
+        <ul>
+          <li><a href={P('/que-es-el-cacao-ceremonial/', '/en/what-is-ceremonial-cacao/')}>{l.what}</a></li>
+          <li><a href={P('/como-preparar-cacao-ceremonial/', '/en/how-to-prepare-ceremonial-cacao/')}>{l.howto}</a></li>
+          <li><a href={P('/cacao-de-tabasco/', '/en/tabasco-cacao/')}>{l.origin}</a></li>
+          {es && <li><a href="/blog/">{l.blog}</a></li>}
+          <li><a href={P('/preguntas-frecuentes/', '/en/faq/')}>{l.faq}</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>{f.shop}</h2>
+        <ul>
+          <li><a href={P('/cacao-ceremonial/', '/en/ceremonial-cacao/')}>{t.nav.product}</a></li>
+          <li><a href={P('/envios/', '/en/shipping/')}>{l.shipping}</a></li>
+          <li><a href={P('/mayoreo/', '/en/wholesale/')}>{l.wholesale}</a></li>
+          <li><a href={P('/mayis/', '/en/mayis/')}>{l.mayis}</a></li>
+          {es && <li><a href="/eventos/">{l.events}</a></li>}
+        </ul>
+        <h2 style="margin-top:1.2em">{f.other}</h2>
+        <p>{f.otherText}</p>
+      </div>
+    </div>
+    <div class="pie-abajo"><span>© {new Date().getFullYear()} {f.rights}</span></div>
+  </div>
+</footer>

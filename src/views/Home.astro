@@ -1,0 +1,161 @@
+---
+import Base from '../layouts/Base.astro';
+import Repisa from '../components/Repisa.astro';
+import Photo from '../components/Photo.astro';
+import Faq from '../components/Faq.astro';
+import { site, wa } from '../data/site';
+import { alternatesFor } from '../data/routes';
+import type { Lang } from '../data/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const alternates = await alternatesFor('home');
+const es = lang === 'es';
+const P = (a: string, b: string) => (es ? a : b);
+
+const c = {
+  es: {
+    title: 'Cacao ceremonial de Tabasco en Campeche | Casa Mayis',
+    desc: 'Compra cacao ceremonial 100% puro de Tabasco, tostado y molido por Mayis en Campeche. Discos, bolitas y bloques de 30 a 500 g. Envíos a todo México.',
+    h1: 'Cacao ceremonial de Tabasco, tostado y molido por Mayis',
+    sub: 'Cacao 100% puro, sin azúcar ni nada más. Lo tuesto y lo muelo yo misma en Campeche, y te lo mando a todo México.',
+    ctaSizes: 'Ver tamaños y precios',
+    whatH: '¿Qué es el cacao ceremonial?',
+    whatP: 'Es cacao 100% puro, sin azúcar ni aditivos, que se tuesta, se muele y se prepara como bebida caliente para compartir en una ceremonia, en un círculo o para tomar con calma en tu casa.',
+    whatL1: 'Qué es el cacao ceremonial', whatL2: 'Cómo prepararlo',
+    t1h: 'De Tabasco', t1p: 'Compro el cacao en los mercados de Villahermosa, a donde llegan las cosechas de Cárdenas, Comalcalco y Huimanguillo. Es cacao tabasqueño, de una tierra donde el cacao se da desde hace siglos.',
+    t2h: 'Tostado y molido por mí', t2p: 'Cada lote lo tuesto y lo muelo yo misma. Por eso sé exactamente lo que va en tu taza.',
+    t3h: 'Solo cacao', t3p: 'Sin azúcar, sin leche, sin aditivos. Viene en disco, bolita o bloque según el tamaño, y dura hasta 12 meses bien guardado.',
+    mayisH: 'Soy Mayis, de Campeche',
+    mayisP1: 'Llevo tiempo reuniendo a la gente alrededor del cacao en ceremonias, talleres y círculos. Ahora puedes llevarte a casa el mismo cacao que sirvo en ellos.',
+    mayisP2: 'Esto es una casa, mi cielo, no una fábrica. Si tienes dudas de cómo prepararlo o cuánto pedir, escríbeme.',
+    mayisL: 'Conoce a Mayis', mayisAlt: 'Mayis, fundadora de Casa Mayis, en su espacio en Campeche',
+    campH: 'Pasa por tu cacao en Campeche',
+    campP: 'Puedes recogerlo en Hacienda Santa María. Avísanos por WhatsApp para tenerlo listo. Si prefieres, te lo mandamos por Correos a cualquier parte de México.',
+    campL1: 'Cacao ceremonial en Campeche', campL2: 'Eventos y círculos', campL3: 'Envíos',
+    hours: 'Horario', hoursV: 'Lunes a domingo, de 9:00 a 18:00',
+    where: 'Dónde', whereV: 'Hacienda Santa María, Campeche',
+    faqH: 'Preguntas rápidas',
+    faq: [
+      { q: '¿Cuál es la diferencia entre cacao y cocoa?', a: 'El cacao es el grano tostado y molido, sin nada más. La cocoa suele ser un polvo procesado al que se le agrega azúcar u otros ingredientes. <a href="/blog/cacao-vs-cocoa/">Aquí lo explico con calma.</a>' },
+      { q: '¿Cuánto dura el cacao?', a: 'Hasta 12 meses si lo guardas bien cerrado, en un lugar fresco y seco.' },
+      { q: '¿Hacen envíos?', a: 'Sí, a todo México. Los detalles están en la <a href="/envios/">página de envíos</a>.' },
+    ],
+    faqL: 'Ver todas las preguntas',
+    wsH: '¿Eres guía de ceremonias o tienes una tienda?',
+    wsP: 'Estamos preparando precios para quienes necesitan cacao con frecuencia. Cuéntanos qué buscas y te escribimos.',
+    wsL: 'Para guías y tiendas',
+  },
+  en: {
+    title: 'Ceremonial Cacao from Tabasco | Casa Mayis, Campeche',
+    desc: 'Buy 100% pure ceremonial cacao from Tabasco, toasted and ground by Mayis in Campeche, Mexico. Discs, balls and blocks from 30 to 500 g. Ships across Mexico.',
+    h1: 'Ceremonial cacao from Tabasco, toasted and ground by Mayis',
+    sub: '100% pure cacao, with no sugar and nothing else. I toast and grind it myself in Campeche and ship it across Mexico.',
+    ctaSizes: 'See sizes and prices',
+    whatH: 'What is ceremonial cacao?',
+    whatP: 'It is 100% pure cacao, with no sugar or additives, toasted, ground and prepared as a hot drink to share in a ceremony, in a circle, or to sip slowly at home.',
+    whatL1: 'What is ceremonial cacao', whatL2: 'How to prepare it',
+    t1h: 'From Tabasco', t1p: 'I buy the cacao in the Villahermosa markets, where harvests arrive from Cárdenas, Comalcalco and Huimanguillo. It is Tabasco cacao, from a land where cacao has grown for centuries.',
+    t2h: 'Toasted and ground by me', t2p: 'I toast and grind every batch myself. That is why I know exactly what goes into your cup.',
+    t3h: 'Only cacao', t3p: 'No sugar, no milk, no additives. It comes as a disc, ball or block depending on the size, and keeps up to 12 months when stored well.',
+    mayisH: 'I am Mayis, from Campeche',
+    mayisP1: 'I have spent a long time gathering people around cacao in ceremonies, workshops and circles. Now you can take home the same cacao I serve in them.',
+    mayisP2: 'This is a home, not a factory. If you wonder how to prepare it or how much to order, write to me.',
+    mayisL: 'Meet Mayis', mayisAlt: 'Mayis, founder of Casa Mayis, in her space in Campeche',
+    campH: 'Pick up your cacao in Campeche',
+    campP: 'You can collect it at Hacienda Santa María. Message us on WhatsApp so we have it ready. Or we can mail it anywhere in Mexico.',
+    campL1: 'Ceremonial cacao in Campeche', campL2: 'Events', campL3: 'Shipping',
+    hours: 'Hours', hoursV: 'Monday to Sunday, 9 am to 6 pm',
+    where: 'Where', whereV: 'Hacienda Santa María, Campeche, Mexico',
+    faqH: 'Quick questions',
+    faq: [
+      { q: 'What is the difference between cacao and cocoa?', a: 'Cacao is the toasted, ground bean with nothing added. Cocoa is usually a processed powder, often with sugar or other ingredients added.' },
+      { q: 'How long does it keep?', a: 'Up to 12 months if kept tightly closed in a cool, dry place.' },
+      { q: 'Do you ship?', a: 'Yes, across Mexico. Details are on the <a href="/en/shipping/">shipping page</a>.' },
+    ],
+    faqL: 'See all questions',
+    wsH: 'Are you a ceremony guide or a shop owner?',
+    wsP: 'We are preparing prices for people who need cacao regularly. Tell us what you are looking for and we will write back.',
+    wsL: 'For guides and shops',
+  },
+}[lang];
+---
+<Base title={c.title} description={c.desc} lang={lang} path={P('/', '/en/')} alternates={alternates}>
+  <section class="muro hero">
+    <div class="wrap">
+      <div class="hero-in">
+        <div>
+          <h1 style="max-width:18ch">{c.h1}</h1>
+          <p class="hero-sub">{c.sub}</p>
+          <div class="btns">
+            <a class="btn" href={P('/cacao-ceremonial/#tamanos', '/en/ceremonial-cacao/#sizes')}>{c.ctaSizes}</a>
+            <a class="btn btn-line" href={wa(es ? 'Hola Mayis, me gustaría pedir cacao.' : 'Hi Mayis, I would like to order cacao.')}>{es ? 'Escríbenos por WhatsApp' : 'Message us on WhatsApp'}</a>
+          </div>
+        </div>
+        <div class="hero-aside" aria-hidden="true">
+          <img class="hero-emblema" src="/images/logo-crema.png" alt="" width="230" height="230" />
+          <p class="hero-name">Casa Mayis</p>
+        </div>
+      </div>
+      <Repisa lang={lang} />
+    </div>
+  </section>
+
+  <section class="cal sec">
+    <div class="wrap dos dos-wide">
+      <div>
+        <h2>{c.whatH}</h2>
+        <p class="lead">{c.whatP}</p>
+        <p><a href={P('/que-es-el-cacao-ceremonial/', '/en/what-is-ceremonial-cacao/')}>{c.whatL1}</a>. <a href={P('/como-preparar-cacao-ceremonial/', '/en/how-to-prepare-ceremonial-cacao/')}>{c.whatL2}</a>.</p>
+      </div>
+      <Photo ratio="4 / 3" label={es ? 'Foto: manos sosteniendo una taza de cacao caliente' : 'Photo: hands holding a cup of hot cacao'} />
+    </div>
+    <div class="wrap tres">
+      <div><h3>{c.t1h}</h3><p>{c.t1p}</p></div>
+      <div><h3>{c.t2h}</h3><p>{c.t2p}</p></div>
+      <div><h3>{c.t3h}</h3><p>{c.t3p}</p></div>
+    </div>
+  </section>
+
+  <section class="cal-alt sec">
+    <div class="wrap dos">
+      <Photo src="/images/mayis.jpg" alt={c.mayisAlt} ratio="3 / 4" w={1086} h={1448} />
+      <div>
+        <h2>{c.mayisH}</h2>
+        <p class="lead">{c.mayisP1}</p>
+        <p>{c.mayisP2}</p>
+        <p><a href={P('/mayis/', '/en/mayis/')}>{c.mayisL}</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cal sec">
+    <div class="wrap dos">
+      <div>
+        <h2>{c.campH}</h2>
+        <p>{c.campP}</p>
+        <dl class="datos">
+          <dt>{c.where}</dt><dd>{c.whereV}</dd>
+          <dt>{c.hours}</dt><dd>{c.hoursV}</dd>
+        </dl>
+        <p style="margin-top:1.2rem">
+          {es && <><a href="/cacao-ceremonial-campeche/">{c.campL1}</a>. <a href="/eventos/">{c.campL2}</a>. </>}
+          <a href={P('/envios/', '/en/shipping/')}>{c.campL3}</a>.
+        </p>
+      </div>
+      <div>
+        <h2>{c.faqH}</h2>
+        <Faq items={c.faq} />
+        <p style="margin-top:1rem"><a href={P('/preguntas-frecuentes/', '/en/faq/')}>{c.faqL}</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="muro sec">
+    <div class="wrap">
+      <h2 style="max-width:22ch">{c.wsH}</h2>
+      <p class="lead">{c.wsP}</p>
+      <div class="btns"><a class="btn" href={P('/mayoreo/', '/en/wholesale/')}>{c.wsL}</a></div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,186 @@
+---
+import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import Faq from '../components/Faq.astro';
+import CierreCta from '../components/CierreCta.astro';
+import { site, products, buyUrl, perGram, wa } from '../data/site';
+import { alternatesFor } from '../data/routes';
+import type { Lang } from '../data/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const es = lang === 'es';
+const P = (a: string, b: string) => (es ? a : b);
+const path = P('/cacao-ceremonial/', '/en/ceremonial-cacao/');
+const alternates = await alternatesFor('product');
+const abs = (p: string) => site.url + p;
+const money = (n: number) => `$${n} MXN`;
+const priceList = products.map((p) => `${p.size} g ${money(p.price)}`).join(', ');
+
+const c = {
+  es: {
+    title: 'Comprar cacao ceremonial de Tabasco, 30 a 500 g | Casa Mayis',
+    desc: `Cacao ceremonial 100% puro de Tabasco, tostado y molido en Campeche. ${priceList}. Envíos a todo México.`,
+    h1: 'Cacao ceremonial de Tabasco',
+    lead: 'Cacao 100% puro, sin azúcar ni aditivos, tostado y molido por Mayis en Campeche. Cuatro tamaños, de 30 a 500 g.',
+    sizesH: 'Elige tu tamaño',
+    perG: (g: string) => `$${g} por gramo`,
+    shipNote: 'Envíos a todo México con Correos. También puedes recogerlo en Hacienda Santa María, Campeche. Si prefieres pagar por transferencia o en efectivo, escríbenos por WhatsApp.',
+    shipL: 'Ver detalles de envío',
+    photoLabel: 'Foto: disco de cacao sobre una tabla de madera, con luz de vela',
+    specH: 'Lo que tiene y lo que no',
+    spec: [
+      ['Ingredientes', 'Cacao. Nada más.'],
+      ['Origen', 'Tabasco, México. Cacao de Cárdenas, Comalcalco y Huimanguillo, comprado en los mercados de Villahermosa.'],
+      ['Proceso', 'Tostado y molido por Mayis en Campeche.'],
+      ['Formas', 'Disco de 30 g y de 100 g, bolita de 200 g y bloque de 500 g.'],
+      ['Conservación', 'Bien cerrado, en un lugar fresco y seco. Dura hasta 12 meses.'],
+    ] as [string, string][],
+    useH: 'Cómo se usa',
+    useP: 'Pica o ralla el cacao, caliéntalo en agua sin que hierva y bátelo con un molinillo hasta que quede espumoso. Endúlzalo con piloncillo o miel si quieres. La guía completa está en',
+    useL: 'cómo preparar cacao ceremonial',
+    useP2: 'Si no sabes cómo partir tu disco, bolita o bloque, lo explicamos en',
+    useL2: 'esta guía',
+    faqH: 'Preguntas sobre el cacao',
+    faq: [
+      { q: '¿Cuántas tazas salen de cada tamaño?', a: 'Como referencia, una taza lleva unos 30 g. Un disco de 30 g es una taza, el de 100 g da unas tres, el de 200 g unas seis y el bloque de 500 g unas dieciséis. Si no estás acostumbrado al cacao puro, empieza con menos.' },
+      { q: '¿Por qué es ceremonial?', a: 'Porque es cacao entero y puro, sin azúcar, leche ni aditivos, que se prepara con calma y con intención. <a href="/que-es-el-cacao-ceremonial/">Aquí te cuento qué significa.</a>' },
+      { q: '¿Quién debería consultarlo antes con su médico?', a: 'El cacao contiene teobromina y un poco de cafeína, estimulantes suaves. Si estás embarazada, tienes alguna condición de salud o tomas medicamentos, consúltalo antes con tu médico.' },
+      { q: '¿Cuánto tarda en llegar?', a: 'Depende del servicio postal y de tu ciudad. Te damos una fecha estimada al confirmar tu pedido. <a href="/envios/">Más sobre envíos.</a>' },
+      { q: '¿Puedo comprar más de uno?', a: 'Sí. En cada tamaño puedes elegir la cantidad al pagar. Si quieres combinar tamaños, escríbenos por WhatsApp y armamos tu pedido.' },
+    ],
+    group: 'Cacao ceremonial de Tabasco',
+    groupDesc: 'Cacao 100% puro de Tabasco, México, sin azúcar ni aditivos, tostado y molido por Mayis en Campeche.',
+    sizeLabel: (n: number) => `${n} g`,
+    offerName: (n: number, f: string) => `Cacao ceremonial de Tabasco, ${f.toLowerCase()} de ${n} g`,
+  },
+  en: {
+    title: 'Buy Ceremonial Cacao from Tabasco, 30 to 500 g | Casa Mayis',
+    desc: `100% pure ceremonial cacao from Tabasco, toasted and ground in Campeche. ${priceList}. Ships across Mexico.`,
+    h1: 'Ceremonial cacao from Tabasco',
+    lead: '100% pure cacao with no sugar or additives, toasted and ground by Mayis in Campeche. Four sizes, from 30 to 500 g.',
+    sizesH: 'Choose your size',
+    perG: (g: string) => `$${g} per gram`,
+    shipNote: 'We ship across Mexico with Correos. You can also pick it up at Hacienda Santa María, Campeche. To pay by bank transfer or cash, message us on WhatsApp.',
+    shipL: 'See shipping details',
+    photoLabel: 'Photo: a disc of cacao on a wooden board, in candlelight',
+    specH: 'What is in it and what is not',
+    spec: [
+      ['Ingredients', 'Cacao. Nothing else.'],
+      ['Origin', 'Tabasco, Mexico. Cacao from Cárdenas, Comalcalco and Huimanguillo, bought in the Villahermosa markets.'],
+      ['Process', 'Toasted and ground by Mayis in Campeche.'],
+      ['Forms', '30 g and 100 g discs, a 200 g ball and a 500 g block.'],
+      ['Storage', 'Tightly closed, in a cool, dry place. Keeps up to 12 months.'],
+    ] as [string, string][],
+    useH: 'How to use it',
+    useP: 'Chop or grate the cacao, warm it in water without letting it boil, and whisk it with a molinillo until frothy. Sweeten with piloncillo or honey if you like. The full guide is in',
+    useL: 'how to prepare ceremonial cacao',
+    useP2: '',
+    useL2: '',
+    faqH: 'Questions about the cacao',
+    faq: [
+      { q: 'How many cups does each size make?', a: 'As a reference, one cup uses about 30 g. A 30 g disc is one cup, 100 g makes about three, 200 g about six, and the 500 g block about sixteen. If you are new to pure cacao, start with less.' },
+      { q: 'Why is it called ceremonial?', a: 'Because it is whole, pure cacao with no sugar, milk or additives, prepared slowly and with intention. <a href="/en/what-is-ceremonial-cacao/">Here is what that means.</a>' },
+      { q: 'Who should check with a doctor first?', a: 'Cacao contains theobromine and a little caffeine, which are mild stimulants. If you are pregnant, have a health condition or take medication, check with your doctor first.' },
+      { q: 'How long does delivery take?', a: 'It depends on the postal service and your city. We give you an estimated date when we confirm your order. <a href="/en/shipping/">More on shipping.</a>' },
+      { q: 'Can I buy more than one?', a: 'Yes. You can choose the quantity at checkout for each size. To combine sizes, message us on WhatsApp and we will put your order together.' },
+    ],
+    group: 'Ceremonial cacao from Tabasco',
+    groupDesc: '100% pure cacao from Tabasco, Mexico, with no sugar or additives, toasted and ground by Mayis in Campeche.',
+    sizeLabel: (n: number) => `${n} g`,
+    offerName: (n: number, f: string) => `Ceremonial cacao from Tabasco, ${n} g ${f.toLowerCase()}`,
+  },
+}[lang];
+
+const ogImage = abs('/images/og-casa-mayis.jpg'); // TODO(casa-mayis): reemplazar por foto real del producto
+const schema = [
+  {
+    '@type': 'ProductGroup',
+    name: c.group,
+    description: c.groupDesc,
+    productGroupID: 'CM-CAC',
+    brand: { '@type': 'Brand', name: site.name },
+    category: 'Cacao',
+    countryOfOrigin: { '@type': 'Country', name: 'México' },
+    image: ogImage,
+    url: abs(path),
+    variesBy: 'https://schema.org/size',
+    hasVariant: products.map((p) => ({
+      '@type': 'Product',
+      sku: p.sku,
+      name: c.offerName(p.size, p.form[lang]),
+      description: c.groupDesc,
+      size: c.sizeLabel(p.size),
+      weight: { '@type': 'QuantitativeValue', value: p.size, unitCode: 'GRM' },
+      brand: { '@type': 'Brand', name: site.name },
+      image: ogImage,
+      offers: {
+        '@type': 'Offer',
+        url: abs(path) + (es ? '#tamanos' : '#sizes'),
+        priceCurrency: 'MXN',
+        price: p.price.toFixed(2),
+        availability: 'https://schema.org/InStock',
+        itemCondition: 'https://schema.org/NewCondition',
+        seller: { '@id': site.url + '/#negocio' },
+      },
+    })),
+  },
+  {
+    '@type': 'FAQPage',
+    mainEntity: c.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/<[^>]+>/g, '') } })),
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: es ? 'Inicio' : 'Home', item: abs(es ? '/' : '/en/') },
+      { '@type': 'ListItem', position: 2, name: c.h1, item: abs(path) },
+    ],
+  },
+];
+---
+<Base title={c.title} description={c.desc} lang={lang} path={path} alternates={alternates} schema={schema}>
+  <div class="cal">
+    <div class="wrap producto-hero dos dos-wide" style="align-items:start">
+      <div>
+        <h1>{c.h1}</h1>
+        <p class="lead">{c.lead}</p>
+        <h2 id={es ? 'tamanos' : 'sizes'} style="font-size:1.5rem;margin-top:1.6rem">{c.sizesH}</h2>
+        <ul class="tallas">
+          {products.map((p) => (
+            <li class="talla">
+              <span class="talla-nombre">{p.size} g<small>{p.form[lang]}. {c.perG(perGram(p))}</small></span>
+              <span class="talla-precio">{money(p.price)}</span>
+              <a class="btn" href={buyUrl(p, lang)} rel={p.stripeUrl ? 'noopener' : undefined}>{p.stripeUrl ? (es ? `Comprar ${p.size} g` : `Buy ${p.size} g`) : (es ? `Pedir ${p.size} g por WhatsApp` : `Order ${p.size} g on WhatsApp`)}</a>
+            </li>
+          ))}
+        </ul>
+        <p class="nota">{c.shipNote} <a href={P('/envios/', '/en/shipping/')}>{c.shipL}</a>.</p>
+      </div>
+      <Photo ratio="4 / 5" label={c.photoLabel} eager />
+    </div>
+  </div>
+
+  <section class="cal-alt sec">
+    <div class="wrap dos" style="align-items:start">
+      <div>
+        <h2>{c.specH}</h2>
+        <dl class="ficha">
+          {c.spec.map(([k, v]) => (<><dt>{k}</dt><dd>{v}</dd></>))}
+        </dl>
+      </div>
+      <div>
+        <h2>{c.useH}</h2>
+        <p>{c.useP} <a href={P('/como-preparar-cacao-ceremonial/', '/en/how-to-prepare-ceremonial-cacao/')}>{c.useL}</a>.</p>
+        {es && <p>{c.useP2} <a href="/blog/como-usar-disco-bolita-bloque-de-cacao/">{c.useL2}</a>.</p>}
+      </div>
+    </div>
+  </section>
+
+  <section class="cal sec">
+    <div class="wrap" style="max-width:48rem;margin-inline:auto">
+      <h2>{c.faqH}</h2>
+      <Faq items={c.faq} />
+    </div>
+  </section>
+  <CierreCta lang={lang} variant="whatsapp" />
+</Base>
