@@ -24,6 +24,7 @@ interface Props {
 const { title, description, lang, path, alternates = {}, image = '/images/og-casa-mayis.jpg', ogType = 'website', schema = [], noindex = false, published, modified } = Astro.props;
 const t = ui[lang];
 const abs = (p: string) => (p.startsWith('http') ? p : site.url + p);
+const preview = process.env.PREVIEW === 'true'; // la vista previa nunca se indexa
 const canonical = abs(path);
 const both = alternates.es && alternates.en;
 
@@ -91,7 +92,7 @@ const graph = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
+    <meta name="robots" content={noindex || preview ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
     <meta name="theme-color" content="#434b2b" />
     <link rel="canonical" href={canonical} />
     {both && <link rel="alternate" hreflang="es-MX" href={abs(alternates.es!)} />}

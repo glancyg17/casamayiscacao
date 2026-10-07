@@ -3,9 +3,13 @@
  * cambiar precios, links de Stripe, horario o WhatsApp.
  */
 
+// En producción es https://casamayis.com. En la vista previa incluye la subcarpeta del repositorio.
+const origin = ((import.meta.env.SITE as string | undefined) ?? 'https://casamayis.com').replace(/\/$/, '');
+const basePath = ((import.meta.env.BASE_URL as string | undefined) ?? '/').replace(/\/$/, '');
+
 export const site = {
   name: 'Casa Mayis',
-  url: 'https://casamayis.com',
+  url: origin + basePath,
   whatsapp: '529381341778',
   whatsappDisplay: '+52 938 134 1778',
   instagram: 'https://instagram.com/casamayis',

@@ -50,11 +50,23 @@ Fotos que faltan, en orden de importancia:
 
 Todas con buena luz natural o de vela, que es la sensación del sitio.
 
-## Publicar (GitHub Pages)
+## Publicar (GitHub Pages): vista previa y lanzamiento
 
-1. En GitHub: **Settings > Pages > Source: GitHub Actions** (una sola vez).
-2. Cada cambio en la rama `main` se publica automáticamente (`.github/workflows/deploy.yml`).
-3. El dominio `casamayis.com` ya está en `public/CNAME`.
+El sitio tiene dos modos. Se elige solo, con una variable de GitHub; el contenido no cambia.
+
+**Vista previa (modo actual).** Se publica en `https://USUARIO.github.io/REPOSITORIO/`, no se indexa en Google y no toca `casamayis.com`. Sirve para revisar y seguir desarrollando mientras el sitio anterior sigue en línea.
+
+1. Una sola vez: en GitHub, **Settings > Pages > Source: GitHub Actions**.
+2. Cada cambio en la rama `main` se publica solo (`.github/workflows/deploy.yml`).
+
+**Lanzamiento (cuando esté listo).**
+
+1. En el repositorio nuevo: **Settings > Secrets and variables > Actions > Variables > New repository variable**: nombre `PRODUCTION`, valor `true`.
+2. **Actions > Publicar en GitHub Pages > Run workflow**, y espera a que termine en verde.
+3. En el repositorio anterior: **Settings > Pages > Custom domain**: borra `casamayis.com`.
+4. En el repositorio nuevo: **Settings > Pages > Custom domain**: escribe `casamayis.com`, guarda y activa **Enforce HTTPS** cuando aparezca disponible.
+
+Como los dos repositorios están en la misma cuenta de GitHub, no hay que cambiar nada en el DNS del dominio. Para volver a vista previa, borra la variable `PRODUCTION`.
 
 ## Trabajar en tu computadora (opcional)
 
